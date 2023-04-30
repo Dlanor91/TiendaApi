@@ -1,4 +1,6 @@
 ﻿using CORE.Interfaces;
+using Infraestructura.Repositories;
+using Infraestructura.UnitOfWork;
 
 namespace API.Extensions
 {
@@ -16,10 +18,11 @@ namespace API.Extensions
         //agrego todos los repositorios a usar
         public static void AddAplicacionServices(this IServiceCollection services)
         {
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<IProductoRepository, ProductoRepository>();
-            services.AddScoped<IMarcaRepository, MarcaRepository>();
-            services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+            //services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            //services.AddScoped<IProductoRepository, ProductoRepository>();
+            //services.AddScoped<IMarcaRepository, MarcaRepository>();
+            //services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+            services.AddScoped<IUnitOfWork,UnitOfWork>();//como UnitOfWork los implementa por separado, los de arriba no los preciso
         }
     }
 }
