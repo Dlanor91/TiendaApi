@@ -1,4 +1,6 @@
-﻿using CORE.Entities;
+﻿using API.Dtos;
+using AutoMapper;
+using CORE.Entities;
 using CORE.Interfaces;
 using Infraestructura.Data;
 using Infraestructura.UnitOfWork;
@@ -10,32 +12,39 @@ namespace API.Controllers
     public class ProductosController : BaseApiController
     {
         //sustituyo por su repositorio private readonly TiendaContext _context; // lo annado al controller
-        private readonly IUnitOfWork _unitofwork;
-        
-        public ProductosController(IUnitOfWork unitofwork) //luego lo introduzco en el contructor
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
+
+        public ProductosController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _unitofwork = unitofwork;
-        }
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+        }    
 
         //metodo get
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<IEnumerable<Producto>>> Get()
+        public async Task<ActionResult<IEnumerable<ProductoListDto>>> Get()
         {
-            var productos = await _unitofwork.Productos
-                            .GetAllAsync();
-            return Ok(productos);
+            var productos = await _unitOfWork.Productos
+                                        .GetAllAsync();
+
+            return _mapper.Map<List<ProductoListDto>>(productos);
         }
 
         //get By id
         [HttpGet("{id}")]//indico el parametro
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Get(int id) //es con IActionResult para un id
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ProductoDto>> Get(int id) //es con IActionResult para un id
         {
-            var producto = await _unitofwork.Productos.GetByIdAsync(id);            
-            return Ok(producto);
+            var producto = await _unitOfWork.Productos.GetByIdAsync(id);
+            if (producto == null)
+                return NotFound();
+
+            return _mapper.Map<ProductoDto>(producto);
         }
 
         //Post: api/Productos
@@ -44,8 +53,8 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Producto>> Post(Producto producto)
         {
-            _unitofwork.Productos.Add(producto);
-            _unitofwork.Save();
+            _unitOfWork.Productos.Add(producto);
+            _unitOfWork.Save();
             if(producto ==null)
             {
                 return BadRequest();
@@ -64,8 +73,8 @@ namespace API.Controllers
             if (producto ==null)
                 return NotFound();
             
-            _unitofwork.Productos.Update(producto);
-            _unitofwork.Save();
+            _unitOfWork.Productos.Update(producto);
+            _unitOfWork.Save();
 
             return producto;
         }
@@ -76,11 +85,11 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]        
         public async Task<ActionResult> Delete(int id)
         {
-            var producto = await _unitofwork.Productos.GetByIdAsync(id);
+            var producto = await _unitOfWork.Productos.GetByIdAsync(id);
             if (producto == null)
                 return NotFound();
-            _unitofwork.Productos.Remove(producto);
-            _unitofwork.Save();
+            _unitOfWork.Productos.Remove(producto);
+            _unitOfWork.Save();
 
             return NoContent();
         }
