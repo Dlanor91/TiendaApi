@@ -1,4 +1,5 @@
 using API.Extensions;
+using AspNetCoreRateLimit;
 using Infraestructura.Data;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,9 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 //Auto maoper
 builder.Services.AddAutoMapper(Assembly.GetEntryAssembly());
+
+//Rate Limit
+builder.Services.ConfigureRateLimitiong();
 
 // Add services to the container.
 builder.Services.ConfigureCors(); //aqui lo annado al proyecto
@@ -26,6 +30,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+//añado elservicio por app
+app.UseIpRateLimiting();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

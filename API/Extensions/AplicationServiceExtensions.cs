@@ -1,4 +1,5 @@
-﻿using CORE.Interfaces;
+﻿using AspNetCoreRateLimit;
+using CORE.Interfaces;
 using Infraestructura.Repositories;
 using Infraestructura.UnitOfWork;
 
@@ -23,6 +24,30 @@ namespace API.Extensions
             //services.AddScoped<IMarcaRepository, MarcaRepository>();
             //services.AddScoped<ICategoriaRepository, CategoriaRepository>();
             services.AddScoped<IUnitOfWork,UnitOfWork>();//como UnitOfWork los implementa por separado, los de arriba no los preciso
+        }
+
+        //para rate limit
+        public static void ConfigureRateLimitiong(this IServiceCollection services)
+        {
+            services.AddMemoryCache();
+            services.AddSingleton<IRateLimitConfiguration,RateLimitConfiguration>();
+            services.AddInMemoryRateLimiting();
+
+            services.Configure<IpRateLimitOptions>( options =>
+            {
+                options.EnableEndpointRateLimiting = true;
+                options.StackBlockedRequests = false;
+                options.HttpStatusCode = 429;
+                options.RealIpHeader = "X-Real-IP";
+                options.GeneralRules = new List<RateLimitRule> { 
+                    new RateLimitRule 
+                    { 
+                        Endpoint = "*",
+                        Period = "10s",
+                        Limit = 2
+                    } 
+                };
+            });
         }
     }
 }
