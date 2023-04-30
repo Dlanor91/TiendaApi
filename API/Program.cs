@@ -12,6 +12,9 @@ builder.Services.AddAutoMapper(Assembly.GetEntryAssembly());
 //Rate Limit
 builder.Services.ConfigureRateLimitiong();
 
+//Versionado
+builder.Services.ConfigureApiVersioning();
+
 // Add services to the container.
 builder.Services.ConfigureCors(); //aqui lo annado al proyecto
 builder.Services.AddAplicacionServices();//servicio que tiene los repositorios 

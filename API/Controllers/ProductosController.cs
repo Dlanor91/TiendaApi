@@ -23,6 +23,7 @@ namespace API.Controllers
 
         //metodo get
         [HttpGet]
+        [ApiVersion("1.0")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<ProductoListDto>>> Get()
@@ -31,6 +32,19 @@ namespace API.Controllers
                                         .GetAllAsync();
 
             return _mapper.Map<List<ProductoListDto>>(productos);
+        }
+
+        //metodo get versionado
+        [HttpGet]
+        [ApiVersion("1.1")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IEnumerable<ProductoDto>>> Get11()
+        {
+            var productos = await _unitOfWork.Productos
+                                        .GetAllAsync();
+
+            return _mapper.Map<List<ProductoDto>>(productos);
         }
 
         //get By id

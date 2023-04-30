@@ -2,6 +2,8 @@
 using CORE.Interfaces;
 using Infraestructura.Repositories;
 using Infraestructura.UnitOfWork;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Extensions
 {
@@ -30,23 +32,45 @@ namespace API.Extensions
         public static void ConfigureRateLimitiong(this IServiceCollection services)
         {
             services.AddMemoryCache();
-            services.AddSingleton<IRateLimitConfiguration,RateLimitConfiguration>();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
             services.AddInMemoryRateLimiting();
 
-            services.Configure<IpRateLimitOptions>( options =>
+            services.Configure<IpRateLimitOptions>(options =>
             {
                 options.EnableEndpointRateLimiting = true;
                 options.StackBlockedRequests = false;
                 options.HttpStatusCode = 429;
                 options.RealIpHeader = "X-Real-IP";
-                options.GeneralRules = new List<RateLimitRule> { 
-                    new RateLimitRule 
-                    { 
-                        Endpoint = "*",
-                        Period = "10s",
-                        Limit = 2
-                    } 
+                options.GeneralRules = new List<RateLimitRule>
+                {
+                    new RateLimitRule
+                    {
+                        Endpoint ="*",
+                        Period = "5s",
+                        Limit = 2 
+                        
+                    }
                 };
+            });
+        }
+
+        //Versionado
+        public static void ConfigureApiVersioning(this IServiceCollection services)
+        {
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.AssumeDefaultVersionWhenUnspecified = true; //version por defecto
+                //query string version con param ver
+                //options.ApiVersionReader = new QueryStringApiVersionReader("ver");
+                //encabezados, aqui X-Version es el parametro del header
+                //options.ApiVersionReader = new HeaderApiVersionReader("X-Version");
+                //tecnicas combinadas pero solo puedo usar 1
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                    new QueryStringApiVersionReader("ver"),
+                    new HeaderApiVersionReader("X-Version"));
+                //te dice las versiones de encabezado
+                options.ReportApiVersions = true;
             });
         }
     }
