@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
+    //digo aqui las versiones generales
+    [ApiVersion("1.0")]
+    [ApiVersion("1.1")]
     public class ProductosController : BaseApiController
     {
         //sustituyo por su repositorio private readonly TiendaContext _context; // lo annado al controller
@@ -22,8 +25,7 @@ namespace API.Controllers
         }    
 
         //metodo get
-        [HttpGet]
-        [ApiVersion("1.0")]
+        [HttpGet]        
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<ProductoListDto>>> Get()
@@ -36,7 +38,7 @@ namespace API.Controllers
 
         //metodo get versionado
         [HttpGet]
-        [ApiVersion("1.1")]
+        [MapToApiVersion("1.1")]//solo esta es 1.1 el resto es 1.0
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<IEnumerable<ProductoDto>>> Get11()
