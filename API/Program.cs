@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.ConfigureCors(); //aqui lo annado al proyecto
+builder.Services.AddAplicacionServices();//servicio que tiene los repositorios 
 
 builder.Services.AddControllers();
 
