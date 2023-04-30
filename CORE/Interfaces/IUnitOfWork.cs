@@ -12,6 +12,6 @@ namespace CORE.Interfaces
         IProductoRepository Productos { get; }
         IMarcaRepository Marcas { get; }
         ICategoriaRepository Categorias { get; }
-        int Save();
+        Task<int> SaveAsync();
     }
 }
