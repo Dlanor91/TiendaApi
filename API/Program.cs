@@ -19,7 +19,12 @@ builder.Services.ConfigureApiVersioning();
 builder.Services.ConfigureCors(); //aqui lo annado al proyecto
 builder.Services.AddAplicacionServices();//servicio que tiene los repositorios 
 
-builder.Services.AddControllers();
+//configurando el formato
+builder.Services.AddControllers(options =>
+{
+    options.RespectBrowserAcceptHeader = true;//habilita el cambio del header
+    options.ReturnHttpNotAcceptable = true;//mensaje de error si no tengo ese formato definido
+}).AddXmlSerializerFormatters();
 
 //agrego el context
 builder.Services.AddDbContext<TiendaContext>(options =>
