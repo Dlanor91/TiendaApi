@@ -1,9 +1,12 @@
+using API.Extensions;
 using Infraestructura.Data;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.ConfigureCors(); //aqui lo annado al proyecto
 
 builder.Services.AddControllers();
 
@@ -45,6 +48,10 @@ using (var scope = app.Services.CreateScope())
         logger.LogError(ex, "Ocurrio un error durante la migracion.");
     }
 }
+
+//
+app.UseCors("CorsPolicy"); //ademas lo uso aqui donde lo llamo a aplicar
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
