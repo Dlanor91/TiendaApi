@@ -57,6 +57,9 @@ var app = builder.Build();
 //manejo de excepciones globales
 app.UseMiddleware<ExceptionMiddleware>();
 
+//metodo de endpoint
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
+
 //añado elservicio por app
 app.UseIpRateLimiting();
 
