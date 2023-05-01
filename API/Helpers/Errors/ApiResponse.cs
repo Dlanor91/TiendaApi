@@ -1,0 +1,26 @@
+﻿namespace API.Helpers.Errors
+{
+    public class ApiResponse
+    {
+        
+        public int StatusCode { get; set; }
+        public string Message { get; set; }
+
+        public ApiResponse(int statusCode, string message=null)
+        {
+            StatusCode=statusCode;
+            Message=message ?? GetDefaultMessage(statusCode);
+        }
+        private string GetDefaultMessage(int statusCode)
+        {
+            return statusCode switch
+            {
+                400 => "Has realizado una peticion incorrecta",
+                401 => "Usuario no Autorizado",
+                404 => "El recurao que has intentado solicitar no existe",
+                405 => "Este metodo HTTPnoesta permitido en el servidor",
+                500 => "Error en el servidor. No eres tu, soy yo.Comunícate con el administrador."
+            };
+        }
+    }
+}

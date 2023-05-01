@@ -1,5 +1,6 @@
 ﻿using API.Dtos;
 using API.Helpers;
+using API.Helpers.Errors;
 using AutoMapper;
 using CORE.Entities;
 using CORE.Interfaces;
@@ -68,7 +69,7 @@ namespace API.Controllers
         {
             var producto = await _unitOfWork.Productos.GetByIdAsync(id);
             if (producto == null)
-                return NotFound();
+                return NotFound(new ApiResponse(404,"El producto solicitado no existe"));
 
             return _mapper.Map<ProductoDto>(producto);
         }
@@ -85,7 +86,7 @@ namespace API.Controllers
             await _unitOfWork.SaveAsync();
             if(producto ==null)
             {
-                return BadRequest();
+                return BadRequest(new ApiResponse(400));
             }
 
             productoDto.Id = producto.Id;
@@ -100,7 +101,7 @@ namespace API.Controllers
         public async Task<ActionResult<ProductoAddUpdateDto>> Put(int id, [FromBody] ProductoAddUpdateDto productoDto)
         {
             if (productoDto ==null)
-                return NotFound();
+                return NotFound(new ApiResponse(404, "El producto solicitado no existe"));
 
             var producto = _mapper.Map<Producto>(productoDto);
             _unitOfWork.Productos.Update(producto);
@@ -117,7 +118,7 @@ namespace API.Controllers
         {
             var producto = await _unitOfWork.Productos.GetByIdAsync(id);
             if (producto == null)
-                return NotFound();
+                return NotFound(new ApiResponse(404, "El producto solicitado no existe"));
             _unitOfWork.Productos.Remove(producto);
             await _unitOfWork.SaveAsync();
 

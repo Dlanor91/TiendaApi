@@ -1,11 +1,20 @@
 using API.Extensions;
+using API.Helpers.Errors;
 using AspNetCoreRateLimit;
 using Infraestructura.Data;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+//serilog
+var logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(builder.Configuration)
+                    .Enrich.FromLogContext()
+                    .CreateLogger();
+//builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 //Auto maoper
 builder.Services.AddAutoMapper(Assembly.GetEntryAssembly());
 
@@ -42,6 +51,9 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+//manejo de excepciones globales
+app.UseMiddleware<ExceptionMiddleware>();
+
 //añado elservicio por app
 app.UseIpRateLimiting();
 
@@ -67,8 +79,8 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        var logger = loggerFactory.CreateLogger<Program>();
-        logger.LogError(ex, "Ocurrio un error durante la migracion.");
+        var _logger = loggerFactory.CreateLogger<Program>();
+        _logger.LogError(ex, "Ocurrio un error durante la migracion.");
     }
 }
 
