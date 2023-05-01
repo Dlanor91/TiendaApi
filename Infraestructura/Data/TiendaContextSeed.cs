@@ -1,4 +1,5 @@
-﻿using CORE.Entities;
+﻿using Core.Entities;
+using CORE.Entities;
 using CsvHelper;
 using Microsoft.Extensions.Logging;
 using System;
@@ -75,6 +76,29 @@ namespace Infraestructura.Data
                     }
                 }
 
+            }
+            catch (Exception ex)
+            {
+                var logger = loggerFactory.CreateLogger<TiendaContextSeed>();
+                logger.LogError(ex.Message);
+            }
+        }
+
+        public static async Task SeedRolesAsync(TiendaContext context, ILoggerFactory loggerFactory)
+        {
+            try
+            {
+                if (!context.Roles.Any())
+                {
+                    var roles = new List<Rol>()
+                        {
+                            new Rol{Id=1, Nombre="Administrador"},
+                            new Rol{Id=2, Nombre="Gerente"},
+                            new Rol{Id=3, Nombre="Empleado"},
+                        };
+                    context.Roles.AddRange(roles);
+                    await context.SaveChangesAsync();
+                }
             }
             catch (Exception ex)
             {

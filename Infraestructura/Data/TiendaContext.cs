@@ -1,4 +1,5 @@
-﻿using CORE.Entities;
+﻿using Core.Entities;
+using CORE.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,9 @@ namespace Infraestructura.Data
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Marca> Marcas { get; set; }
         public DbSet<Categoria> Categorias { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Rol> Roles { get; set; }
+
 
         //indicando cambios de clases
         protected override void OnModelCreating(ModelBuilder modelBuilder)
