@@ -38,6 +38,9 @@ builder.Services.AddControllers(options =>
     options.ReturnHttpNotAcceptable = true;//mensaje de error si no tengo ese formato definido
 }).AddXmlSerializerFormatters();
 
+//servicio de excepciones
+builder.Services.AddValidationErros();
+
 //agrego el context
 builder.Services.AddDbContext<TiendaContext>(options =>
 {

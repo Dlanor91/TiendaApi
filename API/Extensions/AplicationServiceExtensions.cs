@@ -11,6 +11,8 @@ using API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using API.Helpers.Errors;
 
 namespace API.Extensions
 {
@@ -113,6 +115,25 @@ namespace API.Extensions
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
                     };
                 });
+        }
+
+        //validation
+        public static void AddValidationErros(this IServiceCollection services) 
+        {
+            services.Configure<ApiBehaviorOptions>(options => {
+                options.InvalidModelStateResponseFactory = actionContext =>
+                {
+                    var errors = actionContext.ModelState.Where(u => u.Value.Errors.Count>0)
+                                                         .SelectMany(u => u.Value.Errors)
+                                                         .Select(u => u.ErrorMessage).ToArray();
+                    var errorResponse = new ApiValidation()
+                    {
+                        Errors = errors
+                    };
+
+                    return new BadRequestObjectResult(errorResponse);
+                };
+            });
         }
     }
 }
