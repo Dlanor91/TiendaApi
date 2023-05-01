@@ -4,6 +4,13 @@ using Infraestructura.Repositories;
 using Infraestructura.UnitOfWork;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Core.Entities;
+using API.Services;
+using API.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API.Extensions
 {
@@ -25,6 +32,10 @@ namespace API.Extensions
             //services.AddScoped<IProductoRepository, ProductoRepository>();
             //services.AddScoped<IMarcaRepository, MarcaRepository>();
             //services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+            //servicios de autenticacion en cualquier componente
+            services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
+            services.AddScoped<IUserService, UserService>();
+            //Unidad de Trabajo
             services.AddScoped<IUnitOfWork,UnitOfWork>();//como UnitOfWork los implementa por separado, los de arriba no los preciso
         }
 
@@ -72,6 +83,36 @@ namespace API.Extensions
                 //te dice las versiones de encabezado
                 options.ReportApiVersions = true;
             });
+        }
+
+        //servicio de AddJWT
+        public static void AddJwt(this IServiceCollection services, IConfiguration configuration)
+        {
+            //Configuration from AppSettings
+            services.Configure<JWT>(configuration.GetSection("JWT"));
+
+            //Adding Athentication - JWT
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(o =>
+                {
+                    o.RequireHttpsMetadata = false;
+                    o.SaveToken = false;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ClockSkew = TimeSpan.Zero,
+                        ValidIssuer = configuration["JWT:Issuer"],
+                        ValidAudience = configuration["JWT:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Key"]))
+                    };
+                });
         }
     }
 }

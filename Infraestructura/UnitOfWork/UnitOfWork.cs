@@ -1,6 +1,8 @@
-﻿using CORE.Interfaces;
+﻿using Core.Interfaces;
+using CORE.Interfaces;
 using Infraestructura.Data;
 using Infraestructura.Repositories;
+using Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,10 @@ namespace Infraestructura.UnitOfWork
         private IProductoRepository _productos;
         private IMarcaRepository _marcas;
         private ICategoriaRepository _categorias;
+
+        //para roles
+        private IRolRepository _roles;
+        private IUsuarioRepository _usuarios;
 
         public UnitOfWork(TiendaContext context)
         {
@@ -55,6 +61,31 @@ namespace Infraestructura.UnitOfWork
                     _productos = new ProductoRepository(_context);
                 }
                 return _productos;
+            }
+        }
+
+        //roles
+        public IRolRepository Roles
+        {
+            get
+            {
+                if (_roles == null)
+                {
+                    _roles = new RolRepository(_context);
+                }
+                return _roles;
+            }
+        }
+
+        public IUsuarioRepository Usuarios
+        {
+            get
+            {
+                if (_usuarios == null)
+                {
+                    _usuarios = new UsuarioRepository(_context);
+                }
+                return _usuarios;
             }
         }
 

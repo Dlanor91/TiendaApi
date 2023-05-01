@@ -5,6 +5,7 @@ using CORE.Entities;
 using CORE.Interfaces;
 using Infraestructura.Data;
 using Infraestructura.UnitOfWork;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,7 @@ namespace API.Controllers
     //digo aqui las versiones generales
     [ApiVersion("1.0")]
     [ApiVersion("1.1")]
+    [Authorize(Roles = "Administrador")]//tengo q tener token de registro aqui ademas defini un rol
     public class ProductosController : BaseApiController
     {
         //sustituyo por su repositorio private readonly TiendaContext _context; // lo annado al controller

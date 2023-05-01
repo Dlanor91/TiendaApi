@@ -19,6 +19,9 @@ builder.Services.ConfigureApiVersioning();
 builder.Services.ConfigureCors(); //aqui lo annado al proyecto
 builder.Services.AddAplicacionServices();//servicio que tiene los repositorios 
 
+//servicio de token jwt
+builder.Services.AddJwt(builder.Configuration);
+
 //configurando el formato
 builder.Services.AddControllers(options =>
 {
@@ -73,6 +76,8 @@ using (var scope = app.Services.CreateScope())
 app.UseCors("CorsPolicy"); //ademas lo uso aqui donde lo llamo a aplicar
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication(); //server de autenticacion, antes del de autorizacion
 
 app.UseAuthorization();
 
